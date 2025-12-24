@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "548687720012",
+    "project_id": "spendx-ae320",
+    "storage_bucket": "spendx-ae320.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:548687720012:android:d30f11bfda0bb2453dcee9",
+        "android_client_info": {
+          "package_name": "com.example.smartspend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuGd7TtkqTIvAcNzcNdXo6OIphQkX9AaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
