@@ -1,5 +1,5 @@
  import'package:flutter/material.dart';
-Route _slideFadeRoute(Widget page) {
+Route slideFadeRoute(Widget page) {
   return PageRouteBuilder(
     transitionDuration: const Duration(milliseconds: 350),
     pageBuilder: (_, __, ___) => page,
