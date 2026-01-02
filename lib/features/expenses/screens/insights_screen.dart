@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../widgets/bottom_nav.dart';
 import '../../../route/app_router.dart';
-class InsightsScreen extends StatelessWidget {
+import'../../expenses/widgets/app_bar.dart';
+import '../../expenses/screens/add_expense_screen.dart';
+import '../../home/widget/add_button.dart';
+class InsightsScreen extends StatefulWidget {
   const InsightsScreen({super.key});
 
+  @override
+  State<InsightsScreen> createState() => _InsightsScreenState();
+}
+
+class _InsightsScreenState extends State<InsightsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF4F7CFF),
-        onPressed: () {},
-        child: const Icon(Icons.add),
-      ),
+     floatingActionButton: AddButton(),
+      appBar: const SmartSpendHeader(subtitle: "Insigts"), 
       bottomNavigationBar: AppBottomNav(
-        currentIndex: 0,
+        currentIndex: 2,
         onTap: (index) => handleNav(context, index),
       ),
       body: SafeArea(
@@ -24,7 +29,7 @@ class InsightsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _header(),
+             
               const SizedBox(height: 20),
 
               /// Top Stat Cards
@@ -77,42 +82,6 @@ class InsightsScreen extends StatelessWidget {
       ),
     );
   }
-
-  // ───────────────────────── Header ─────────────────────────
-
-  Widget _header() => Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFE9F2FF), Color(0xFFFCE7F3)],
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          children: [
-            const CircleAvatar(
-              radius: 22,
-              backgroundColor: Color(0xFF4F7CFF),
-              child: Icon(Icons.attach_money, color: Colors.white),
-            ),
-            const SizedBox(width: 12),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Smart Spend',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text('Insights', style: TextStyle(color: Colors.black54)),
-              ],
-            ),
-            const Spacer(),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.person_outline),
-            )
-          ],
-        ),
-      );
 
   // ───────────────────────── Breakdown Card ─────────────────────────
 
@@ -246,9 +215,6 @@ class InsightsScreen extends StatelessWidget {
           ),
         ],
       );
-
-  // ───────────────────────── Bottom Nav ─────────────────────────
-
 
 }
 

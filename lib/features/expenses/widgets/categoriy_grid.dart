@@ -1,36 +1,18 @@
 import'package:flutter/material.dart';
 import'./box_decoration.dart';
 
-class CategoryGrid extends StatefulWidget {
-  const CategoryGrid({Key? key}) : super(key: key);
 
-  @override
-  _CategoryGridState createState() => _CategoryGridState();
-}
+class CategoryGrid extends StatelessWidget {
+  final List<(String, String)> categories;
+  final String selectedCategory;
+  final ValueChanged<String> onCategorySelected;
 
-class _CategoryGridState extends State<CategoryGrid> {
-  String _selectedCategory = 'Food';
-
-  final amountCtrl = TextEditingController();
-  final descriptionCtrl = TextEditingController();
-  final storeCtrl = TextEditingController();
-
-  final categories = const [
-    ('Food', '🍔'),
-    ('Travel', '✈️'),
-    ('Entertainment', '🎬'),
-    ('Shopping', '🛒'),
-    ('Health', '🩺'),
-    ('Utility', '💧'),
-  ];
-
-  @override
-  void dispose() {
-    amountCtrl.dispose();
-    descriptionCtrl.dispose();
-    storeCtrl.dispose();
-    super.dispose();
-  }
+  const CategoryGrid({
+    super.key,
+    required this.categories,
+    required this.selectedCategory,
+    required this.onCategorySelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,17 +24,23 @@ class _CategoryGridState extends State<CategoryGrid> {
         crossAxisCount: 3,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
+        childAspectRatio: 1.1,
       ),
-      itemBuilder: (_, i) {
-        final (name, emoji) = categories[i];
-        final active = name == _selectedCategory;
+      itemBuilder: (context, index) {
+        final (name, emoji) = categories[index];
+        final isSelected = name == selectedCategory;
 
         return GestureDetector(
-          onTap: () => setState(() => _selectedCategory = name),
+          onTap: () => onCategorySelected(name),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            decoration: boxDecoration(
-              active: active,
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.blue.shade50 : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected ? Colors.blue : Colors.grey.shade300,
+                width: 2,
+              ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -61,12 +49,12 @@ class _CategoryGridState extends State<CategoryGrid> {
                   emoji,
                   style: const TextStyle(fontSize: 28),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Text(
                   name,
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: active ? Colors.blue : Colors.black,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ],
@@ -78,4 +66,4 @@ class _CategoryGridState extends State<CategoryGrid> {
   }
 }
 
-Widget categoryGrid() => const CategoryGrid();
+

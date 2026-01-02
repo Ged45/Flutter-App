@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../widgets/amount_field.dart';
 import '../widgets/categoriy_grid.dart';
 import '../widgets/label.dart';
 import '../widgets/submit_button.dart';
 import '../widgets/text_field.dart';
-
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({super.key});
@@ -14,11 +15,14 @@ class AddExpenseScreen extends StatefulWidget {
 }
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
+  
   String selectedCategory = 'Food';
 
   final amountCtrl = TextEditingController();
   final descriptionCtrl = TextEditingController();
   final storeCtrl = TextEditingController();
+
+  bool loading = false;
 
   final categories = const [
     ('Food', '🍔'),
@@ -56,12 +60,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 label('Amount'),
-                amountField(),
+                 amountField(
+                  controller: amountCtrl),
 
                 const SizedBox(height: 24),
                 label('Category'),
                 const SizedBox(height: 12),
-                categoryGrid(),
+              
+CategoryGrid(
+  categories: categories,
+  selectedCategory: selectedCategory,
+  onCategorySelected: (category) {
+    setState(() {
+      selectedCategory = category;
+    });
+  },
+),
 
                 const SizedBox(height: 24),
                 label('Description'),
@@ -99,18 +113,34 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             borderRadius: BorderRadius.circular(28),
           ),
           child: ElevatedButton(
-            onPressed: submit,
+            onPressed: loading
+                ? null
+                : () async {
+                    setState(() => loading = true);
+                    await submit();
+                    setState(() => loading = false);
+                  },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
             ),
-            child: const Text(
-              'Add Expense',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            child: loading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Text(
+                    'Add Expense',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
         ),
       );
@@ -124,19 +154,41 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   // ───────────────────────── Logic ─────────────────────────
 
    
-void submit() {
-    final amount = double.tryParse(amountCtrl.text);
 
-    if (amount == null || amount <= 0) return;
+Future<void> submit() async {
+  final amount = double.tryParse(amountCtrl.text);
 
-    // TODO: connect to Supabase insert
-    debugPrint({
+  if (amount == null || amount <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter a valid amount')),
+    );
+    return;
+  }
+
+  final user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('User not authenticated')),
+    );
+    return;
+  }
+
+  try {
+    await Supabase.instance.client.from('expenses').insert({
+      'firebase_uid': user.uid,
       'amount': amount,
       'category': selectedCategory,
-      'description': descriptionCtrl.text,
-      'store': storeCtrl.text,
-    }.toString());
+      'description': descriptionCtrl.text.trim(),
+      'store': storeCtrl.text.trim(),
+    });
 
     Navigator.pop(context);
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to add expense: $e')),
+    );
   }
+}
+  
 }

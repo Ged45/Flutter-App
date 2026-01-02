@@ -8,19 +8,12 @@ import'./box_decoration.dart';
   final descriptionCtrl = TextEditingController();
   final storeCtrl = TextEditingController();
 
-  final categories = const [
-    ('Food', '🍔'),
-    ('Travel', '✈️'),
-    ('Entertainment', '🎬'),
-    ('Shopping', '🛒'),
-    ('Health', '🩺'),
-    ('Utility', '💧'),
-  ];
-  Widget amountField() => Container(
+  Widget amountField({required TextEditingController controller}) => Container(
+  
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: boxDecoration(),
         child: TextField(
-          controller: amountCtrl,
+          controller: controller,
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
             border: InputBorder.none,
@@ -29,8 +22,9 @@ import'./box_decoration.dart';
             suffixIcon: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.keyboard_arrow_up, size: 18),
-                Icon(Icons.keyboard_arrow_down, size: 18),
+                // increment and decrement arrows can be added here in future
+                
+                
               ],
             ),
           ),
