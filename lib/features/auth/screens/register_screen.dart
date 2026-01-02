@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartspend/features/auth/screens/login_screen.dart';
+import 'package:provider/provider.dart';
+import '../../auth/providers/auth_provider.dart';
 class SmartSpendSignUp extends StatefulWidget {
   const SmartSpendSignUp({super.key});
 
@@ -8,6 +10,11 @@ class SmartSpendSignUp extends StatefulWidget {
 }
 
 class _SmartSpendSignUpState extends State<SmartSpendSignUp> {
+
+final _emailController = TextEditingController();
+final _passwordController = TextEditingController();
+final _nameController = TextEditingController();
+bool _obscurePassword = true;
 
  double _scale = 1.0;
  void _onTap()async{
@@ -134,7 +141,20 @@ class _SmartSpendSignUpState extends State<SmartSpendSignUp> {
                     children: [
                       /// Google Button
                       OutlinedButton.icon(
-                        onPressed: () {},
+                        onPressed: () async {
+                          // Handle Google Sign-In
+                          final auth = context.read<AuthProvider>();
+                              if (auth.isLoading) return;
+                              final user = await auth.googleSignIn();
+    
+                              if (user != null) {
+                                  // Navigate to home
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(auth.error ?? "Google Sign-In failed")),
+                                );
+                              }
+                        },
                         icon: Image.asset(
                           "assets/images/icons8-google-48.png",
                           height: 20,
@@ -167,6 +187,7 @@ class _SmartSpendSignUpState extends State<SmartSpendSignUp> {
                       /// Full Name
                       _inputLabel("Full Name"),
                       _inputField(
+                        controller: _nameController,
                         hint: "Ged Sam",
                         icon: Icons.person_outline,
                       ),
@@ -176,6 +197,8 @@ class _SmartSpendSignUpState extends State<SmartSpendSignUp> {
                       /// Email
                       _inputLabel("Email"),
                       _inputField(
+                        // Email controller
+                        controller: _emailController,
                         hint: "you@example.com",
                         icon: Icons.email_outlined,
                       ),
@@ -185,10 +208,18 @@ class _SmartSpendSignUpState extends State<SmartSpendSignUp> {
                       /// Password
                       _inputLabel("Password"),
                       _inputField(
+                        controller: _passwordController,
                         hint: "••••••••",
-                        icon: Icons.lock_outline,
-                        suffix: Icons.visibility_off_outlined,
-                        obscure: true,
+  icon: Icons.lock_outline,
+  obscure: _obscurePassword,
+  suffix: _obscurePassword
+      ? Icons.visibility_outlined
+      : Icons.visibility_off_outlined,
+  onSuffixTap: () {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+    });
+  },
                       ),
 
                       const SizedBox(height: 6),
@@ -217,7 +248,30 @@ class _SmartSpendSignUpState extends State<SmartSpendSignUp> {
                           ),
                         ),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            
+                         final auth = context.read<AuthProvider>();
+
+                         final user = await auth.signup(
+                           _emailController.text.trim(),
+                           _passwordController.text.trim(),
+                         );
+
+                         if (user != null) {
+                           await auth.sendVerificationEmail();
+
+                         ScaffoldMessenger.of(context).showSnackBar(
+                           const SnackBar(
+                             content: Text("Verification email sent. Check your inbox."),
+                           ),
+                         );
+                           // Navigate to home
+                         } else {
+                           ScaffoldMessenger.of(context).showSnackBar(
+                             SnackBar(content: Text(auth.error ?? "Signup failed")),
+                           );
+                         }
+                       },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,
@@ -283,25 +337,34 @@ class _SmartSpendSignUpState extends State<SmartSpendSignUp> {
     );
   }
 
-  static Widget _inputField({
-    required String hint,
-    required IconData icon,
-    IconData? suffix,
-    bool obscure = false,
-  }) {
-    return TextField(
-      obscureText: obscure,
-      decoration: InputDecoration(
-        hintText: hint,
-        prefixIcon: Icon(icon),
-        suffixIcon: suffix != null ? Icon(suffix) : null,
-        filled: true,
-        fillColor: Colors.grey.shade100,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
-        ),
+  Widget _inputField({
+  required TextEditingController controller,
+  required String hint,
+  required IconData icon,
+  IconData? suffix,
+  VoidCallback? onSuffixTap,
+  bool obscure = false,
+}) {
+  return TextField(
+    controller: controller,
+    obscureText: obscure,
+    decoration: InputDecoration(
+      hintText: hint,
+      prefixIcon: Icon(icon),
+      suffixIcon: suffix != null
+          ? IconButton(
+              icon: Icon(suffix),
+              onPressed: onSuffixTap,
+            )
+          : null,
+      filled: true,
+      fillColor: Colors.grey.shade100,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: BorderSide.none,
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

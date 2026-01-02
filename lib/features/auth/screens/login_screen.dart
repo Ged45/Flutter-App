@@ -1,7 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smartspend/features/auth/screens/register_screen.dart';
-
+import'../../auth/providers/auth_provider.dart';
+import '../screens/forgot_password.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -10,6 +12,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+final _emailController = TextEditingController();
+final _passwordController = TextEditingController();
+bool _obscurePassword = true;
 
 
  double _scale = 1.0;
@@ -140,27 +145,35 @@ Route _slideFadeRoute(Widget page) {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// Google Button
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(52),
-                        side: const BorderSide(color: Color(0xFFE0E0E0)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      icon: Image.asset(
-                        'assets/images/icons8-google-48.png',
-                        height: 20,
-                      ),
-                      label: const Text(
-                        'Continue with Google',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                        ),
-                      ),
-                      onPressed: () {},
-                    ),
+OutlinedButton.icon(
+  style: OutlinedButton.styleFrom(
+    minimumSize: const Size.fromHeight(52),
+    side: const BorderSide(color: Color(0xFFE0E0E0)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(14),
+    ),
+  ),
+  icon: Image.asset(
+    'assets/images/icons8-google-48.png',
+    height: 20,
+  ),
+  label: const Text(
+    'Continue with Google',
+    style: TextStyle(
+      color: Colors.black,
+      fontSize: 16,
+    ),
+  ),
+  onPressed: () async {
+    final auth = context.read<AuthProvider>();
+    if (auth.isLoading) return;
+    final user = await auth.googleSignIn();
+    
+    if (user != null) {
+      // Navigate to home
+    }
+  },
+),
 
                     const SizedBox(height: 20),
 
@@ -181,6 +194,7 @@ Route _slideFadeRoute(Widget page) {
                     const Text('Email'),
                     const SizedBox(height: 8),
                     TextField(
+                      controller: _emailController,
                       decoration: InputDecoration(
                         hintText: 'you@example.com',
                         prefixIcon: const Icon(Icons.email_outlined),
@@ -195,22 +209,71 @@ Route _slideFadeRoute(Widget page) {
                     const Text('Password'),
                     const SizedBox(height: 8),
                     TextField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: const Icon(Icons.visibility_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
+                      controller: _passwordController,
+                      obscureText: _obscurePassword,
+  decoration: InputDecoration(
+    prefixIcon: const Icon(Icons.lock_outline),
+    suffixIcon: IconButton(
+      icon: Icon(
+        _obscurePassword
+            ? Icons.visibility_outlined
+            : Icons.visibility_off_outlined,
+      ),
+      onPressed: () {
+        setState(() {
+          _obscurePassword = !_obscurePassword;
+        });
+      },
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+    ),
+  ),
                     ),
+                    Align(
+  alignment: Alignment.centerRight,
+  child: TextButton(
+    onPressed: () {
+      showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (_) => const ForgotPasswordSheet(),
+      );
+    },
+    child: const Text("Forgot password?"),
+  ),
+),
+
 
                     const SizedBox(height: 24),
 
                     /// Sign In Button
-                    Container(
-                      width: double.infinity,
-                      height: 52,
+                     
+                    Consumer<AuthProvider>(
+  builder: (context, auth, _) {
+
+                    return GestureDetector(
+  onTap: () async {
+    final auth = context.read<AuthProvider>();
+
+    final user = await auth.login(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    if (user != null) {
+      
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(auth.error ?? "Login failed")),
+      );
+    }
+  },
+                  child: Container( 
+                        width: double.infinity,
+                        height: 52,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         gradient: const LinearGradient(
@@ -220,6 +283,7 @@ Route _slideFadeRoute(Widget page) {
                           ],
                         ),
                       ),
+                      
                       child: const Center(
                         child: Text(
                           'Sign In',
@@ -230,6 +294,9 @@ Route _slideFadeRoute(Widget page) {
                           ),
                         ),
                       ),
+                    ),
+                    );
+                    },
                     ),
 
                     const SizedBox(height: 16),
