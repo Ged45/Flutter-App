@@ -1,6 +1,4 @@
 import'package:flutter/material.dart';
-import'./box_decoration.dart';
-
 
 class CategoryGrid extends StatelessWidget {
   final List<(String, String)> categories;

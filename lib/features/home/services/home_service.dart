@@ -4,6 +4,8 @@ import'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+
 
 Future<void> exportExpensesToCSV() async {
   final user = FirebaseAuth.instance.currentUser;
@@ -39,6 +41,25 @@ Future<void> exportExpensesToCSV() async {
 
   debugPrint('CSV exported to ${file.path}');
 }
+
+
+
+Future<void> shareExpensesCsv() async {
+  final dir = await getApplicationDocumentsDirectory();
+  final path = '${dir.path}/expenses.csv';
+  final file = File(path);
+
+  if (!await file.exists()) {
+    throw Exception("expenses.csv not found");
+  }
+
+  await Share.shareXFiles(
+    [XFile(file.path, mimeType: 'text/csv')],
+    text: 'Here is my expenses export.',
+    subject: 'Expenses CSV',
+  );
+}
+
 
 
 Future<Map<DateTime, double>> fetchWeeklySpending() async {

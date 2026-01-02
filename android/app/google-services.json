@@ -12,7 +12,20 @@
           "package_name": "com.example.smartspend"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "548687720012-inlmu4egc7n0b0u9plg22h8dv17ljes8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartspend",
+            "certificate_hash": "f63fc4c62e4e4a0f4cf4c034965133be2c198d7a"
+          }
+        },
+        {
+          "client_id": "548687720012-fi9cuskgsie1pv6olgoccl67av0ujlfi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCuGd7TtkqTIvAcNzcNdXo6OIphQkX9AaM"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "548687720012-fi9cuskgsie1pv6olgoccl67av0ujlfi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "548687720012-kc37p2ei2323819o26dq0624ad4a77g4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartspend"
+              }
+            }
+          ]
         }
       }
     }

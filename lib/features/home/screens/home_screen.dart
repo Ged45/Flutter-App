@@ -87,7 +87,7 @@ void openAddExpense(BuildContext context, {String? preset}) {
       maxChildSize: 0.95,
       builder: (_, controller) => ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        child: AddExpenseScreen(),
+        child: AddExpenseScreen(presetProduct: {},),
       ),
     ),
   ).then((_) => fetchHomeData());

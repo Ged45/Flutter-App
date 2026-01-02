@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import './card_decoration.dart';
 import '../animation/couter_widget.dart';
 class StatCard extends StatelessWidget {
-  final String title, value, subtitle;
+  final String title, subtitle;
+  final double value;
   final IconData icon;
   final Color iconBg;
 
@@ -33,7 +34,7 @@ class StatCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(title, style: const TextStyle(color: Colors.black54)),
           const SizedBox(height: 6),
-          AnimatedNumber(value: 1775.5, suffix: 'Birr'),
+          AnimatedNumber(value: value, suffix: 'Birr'),
 
           const SizedBox(height: 6),
           Text(subtitle,

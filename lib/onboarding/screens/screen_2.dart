@@ -55,18 +55,8 @@ class _InsightsGoalsScreenState extends State<InsightsGoalsScreen>
       child: SafeArea(
         child: Stack(
           children: [
-            /// Skip
-            Positioned(
-              top: 8,
-              right: 16,
-              child: TextButton(
-                onPressed: widget.onFinish,
-                child: const Text(
-                  "Skip",
-                  style: TextStyle(color: Colors.black54),
-                ),
-              ),
-            ),
+            
+            
 
             /// Floating icons
             _floatingIcon(

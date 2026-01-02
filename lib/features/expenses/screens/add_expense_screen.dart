@@ -8,7 +8,7 @@ import '../widgets/submit_button.dart';
 import '../widgets/text_field.dart';
 
 class AddExpenseScreen extends StatefulWidget {
-  const AddExpenseScreen({super.key});
+  const AddExpenseScreen({super.key, required Map<String, dynamic> presetProduct});
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
